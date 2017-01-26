@@ -2,8 +2,17 @@
 class ErrorsController < ApplicationController
   before_action :set_error, only: [:show, :update, :destroy]
 
+  # For all responses in this controller, return the CORS access control headers.
+  def cors_set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'GET'
+    headers['Access-Control-Allow-Headers'] = '*'
+    headers['Access-Control-Max-Age'] = "1728000"
+  end
+
   # GET /errors
   def index
+    cors_set_access_control_headers
     @errors = File.read("#{Rails.root}/public/sample_resonse.json")
 
     render json: @errors
