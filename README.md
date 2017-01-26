@@ -1,24 +1,11 @@
-# README
+# SnugBag
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+SnugBag is a service that queries bugsnag for current errors, and filters the
+response based on the Controller in `last_context` and the Team that owns that
+Controller.
 
-Things you may want to cover:
+# Ruby version
+This project is using rbenv and Ruby 2.4.0
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# How to run the test suite
+Rake test
