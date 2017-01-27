@@ -28,6 +28,7 @@ class ErrorsController < ApplicationController
       }
       # TODO: error handling
       @response = client.errors("5437fc527765622ef400a8e7", query_hash)
+
       controller_matchers = controllers_for(team_id.to_i)
       @errors = @response.select {|e| controller_matchers.find{ |c| c.match(e.last_context)}}
       .map {|e| e.to_hash }
@@ -78,8 +79,12 @@ class ErrorsController < ApplicationController
     end
 
     def controllers_for(team_id)
-      # TODO: make a controllers table to store these associations
-      controller_matchers = [
+      controller_matchers.select{|c| c[:team_id] == team_id}.map{|c| c[:exp]}
+    end
+
+    # TODO: make a controllers table to store these associations
+    def controller_matchers
+      [
         # CREATE TEAM
         {:exp => /api\/NewPapersController#index/, :team_id => 2},
         {:exp => /api\/EnvelopesController#index/, :team_id => 2},
@@ -157,7 +162,5 @@ class ErrorsController < ApplicationController
         {:exp => /CartsController/, :team_id => 4},
         {:exp => /api\/carts\/ShippingAddressesController/, :team_id => 4}
       ]
-
-      controller_matchers.select{|c| c[:team_id] == team_id}.map{|c| c[:exp]}
     end
 end
