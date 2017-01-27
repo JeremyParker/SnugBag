@@ -7,5 +7,7 @@ Controller.
 # Ruby version
 This project is using rbenv and Ruby 2.4.0
 
+Uses https://github.com/bugsnag/bugsnag-api-ruby
+
 # How to run the test suite
 Rake test
