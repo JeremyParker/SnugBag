@@ -24,9 +24,10 @@ class ErrorsController < ApplicationController
       "filters[event.severity][0][value]": "error",
       "filters[event.severity][0][type]": "eq"
     }
-    @errors = client.errors("5437fc527765622ef400a8e7", query_hash)
+    # TODO: error handling
+    @errors = client.errors("5437fc527765622ef400a8e7", query_hash).map {|e| e.to_hash}
 
-    render json: @errors
+    render json: {:errors => @errors}
   end
 
   # GET /errors/1
