@@ -1,8 +1,16 @@
 class TeamsController < ApplicationController
   before_action :set_team, only: [:show, :update, :destroy]
 
+  def cors_set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'GET'
+    headers['Access-Control-Allow-Headers'] = '*'
+    headers['Access-Control-Max-Age'] = "1728000"
+  end
+
   # GET /teams
   def index
+    cors_set_access_control_headers
     @teams = [
         {
           :id => 1,
