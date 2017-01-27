@@ -27,12 +27,11 @@ class ErrorsController < ApplicationController
     # TODO: error handling
     @response = client.errors("5437fc527765622ef400a8e7", query_hash)
 
-    controller_matchers = controllers_for(team_id.to_i)
-
     if team_id = params[:team_id]
-      @errors = @response.select {|e| controller_matchers.find{ |c| c.match(e.last_context)}}
+      matchers = controllers_for(team_id.to_i)
+      @errors = @response.select {|e| matchers.find{ |c| c.match(e.last_context)}}
     else
-      @errors = @response.select {|e| !controller_matchers.find{ |c| c.match(e.last_context)}}
+      @errors = @response.reject {|e| controller_matchers.find{ |c| c[:exp].match(e.last_context)}}
     end
 
     render json: {:errors => @errors.map {|e| e.to_hash}}
