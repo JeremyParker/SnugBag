@@ -12,6 +12,8 @@ gem 'rails', '~> 5.0.1'
 # use postgres
 gem 'pg'
 
+gem "bugsnag-api"
+
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

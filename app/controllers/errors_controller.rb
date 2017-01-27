@@ -1,3 +1,4 @@
+require 'bugsnag/api'
 
 class ErrorsController < ApplicationController
   before_action :set_error, only: [:show, :update, :destroy]
@@ -13,7 +14,17 @@ class ErrorsController < ApplicationController
   # GET /errors
   def index
     cors_set_access_control_headers
-    @errors = File.read("#{Rails.root}/public/sample_resonse.json")
+
+    client = Bugsnag::Api::Client.new(auth_token: ENV["BUGSNAG_TOKEN"])
+    query_hash = {
+      per_page: 1000,
+      "filters[error.status][]": "open",
+      "filters[app.release_stage][]": "production",
+      "filters[event.since][]": "7d",
+      "filters[event.severity][0][value]": "error",
+      "filters[event.severity][0][type]": "eq"
+    }
+    @errors = client.errors("5437fc527765622ef400a8e7", query_hash)
 
     render json: @errors
   end
