@@ -14,27 +14,28 @@ class ErrorsController < ApplicationController
   # GET /errors
   def index
     cors_set_access_control_headers
-    @errors = []
+
+    client = Bugsnag::Api::Client.new(auth_token: ENV["BUGSNAG_TOKEN"])
+    query_hash = {
+      per_page: 1000,
+      "filters[error.status][]": "open",
+      "filters[app.release_stage][]": "production",
+      "filters[event.since][]": "7d",
+      "filters[event.severity][0][value]": "error",
+      "filters[event.severity][0][type]": "eq"
+    }
+    # TODO: error handling
+    @response = client.errors("5437fc527765622ef400a8e7", query_hash)
+
+    controller_matchers = controllers_for(team_id.to_i)
 
     if team_id = params[:team_id]
-      client = Bugsnag::Api::Client.new(auth_token: ENV["BUGSNAG_TOKEN"])
-      query_hash = {
-        per_page: 1000,
-        "filters[error.status][]": "open",
-        "filters[app.release_stage][]": "production",
-        "filters[event.since][]": "7d",
-        "filters[event.severity][0][value]": "error",
-        "filters[event.severity][0][type]": "eq"
-      }
-      # TODO: error handling
-      @response = client.errors("5437fc527765622ef400a8e7", query_hash)
-
-      controller_matchers = controllers_for(team_id.to_i)
       @errors = @response.select {|e| controller_matchers.find{ |c| c.match(e.last_context)}}
-      .map {|e| e.to_hash }
+    else
+      @errors = @response.select {|e| !controller_matchers.find{ |c| c.match(e.last_context)}}
     end
 
-    render json: {:errors => @errors}
+    render json: {:errors => @errors.map {|e| e.to_hash}}
   end
 
   # GET /errors/1
